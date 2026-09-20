@@ -18,8 +18,8 @@ export const DEFAULT_LOAN_CATEGORIES: LoanCategoryItem[] = [
 export const DEFAULT_SETTINGS: AppSettings = {
   currencySymbol: '$',
   currencyCode: 'USD',
-  androidFrameView: true,
-  osMode: 'ios',
+  androidFrameView: false,
+  osMode: 'web',
   notificationsEnabled: true,
   darkTheme: true,
   soundEnabled: true,

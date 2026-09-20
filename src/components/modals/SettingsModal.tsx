@@ -213,16 +213,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <button
                 type="button"
                 onClick={() =>
-                  onUpdateSettings({ ...settings, osMode: 'desktop', androidFrameView: false })
+                  onUpdateSettings({ ...settings, osMode: 'web', androidFrameView: false })
                 }
                 className={`py-2 px-2 rounded-xl font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer ${
-                  settings.osMode === 'desktop'
-                    ? 'bg-slate-900 text-sky-400 font-bold border border-sky-500/50 shadow-sm'
+                  settings.osMode === 'web' || settings.osMode === 'desktop'
+                    ? 'bg-slate-900 text-emerald-400 font-bold border border-emerald-500/50 shadow-sm'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <span className="text-base">🖥️</span>
-                <span className="text-[11px]">Desktop View</span>
+                <span className="text-base">🌐</span>
+                <span className="text-[11px]">Web Version</span>
               </button>
             </div>
             <p className="text-[11px] text-slate-400">
@@ -230,7 +230,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 ? 'iOS mode active: Features iPhone Dynamic Island, iOS system status bar, Cupertino blurred bottom navigation, and Home Indicator.'
                 : settings.osMode === 'android'
                 ? 'Android mode active: Features Material You status bar, punch-hole camera notch, Android notification drawer, and Material 3 tabs.'
-                : 'Desktop view: Expands to full screen width for larger tablets and monitors.'}
+                : 'Web Version active: Full-width dashboard with top navigation bar, quick action tools, multi-column layout, and unrestricted desktop scrolling.'}
             </p>
           </div>
 

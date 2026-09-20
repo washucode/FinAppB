@@ -145,9 +145,9 @@ export const RemindersView: React.FC<RemindersViewProps> = ({
       </div>
 
       {/* Reminders List */}
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
         {filtered.length === 0 ? (
-          <div className="py-12 text-center text-slate-400 bg-slate-900 rounded-2xl border border-slate-800">
+          <div className="md:col-span-2 py-12 text-center text-slate-400 bg-slate-900 rounded-2xl border border-slate-800">
             <Bell className="w-10 h-10 mx-auto text-slate-600 mb-2" />
             <p className="text-sm font-medium text-slate-300">No reminders in this list</p>
             <p className="text-xs text-slate-500 mt-0.5">Automated reminders trigger as loan due dates approach</p>

@@ -109,7 +109,7 @@ export interface AppSettings {
   currencySymbol: string;
   currencyCode: string;
   androidFrameView: boolean;
-  osMode: 'android' | 'ios' | 'desktop';
+  osMode: 'web' | 'ios' | 'android' | 'desktop';
   notificationsEnabled: boolean;
   darkTheme: boolean;
   soundEnabled: boolean;

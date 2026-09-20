@@ -412,3 +412,37 @@ export async function triggerSystemNotification(title: string, body: string): Pr
   }
   return false;
 }
+
+export interface LoanOverview {
+  totalBorrowedPrincipal: number;
+  totalBorrowedBalance: number;
+  totalLentPrincipal: number;
+  totalLentBalance: number;
+  monthlyCommitment: number;
+}
+
+export function computeLoanOverview(loans: Loan[]): LoanOverview {
+  const borrowedLoans = loans.filter((l) => l.type === 'borrowed' && l.status === 'active');
+  const lentLoans = loans.filter((l) => l.type === 'lent' && l.status === 'active');
+
+  const totalBorrowedPrincipal = loans
+    .filter((l) => l.type === 'borrowed')
+    .reduce((acc, l) => acc + l.principalAmount, 0);
+  const totalBorrowedBalance = borrowedLoans.reduce((acc, l) => acc + l.currentBalance, 0);
+
+  const totalLentPrincipal = loans
+    .filter((l) => l.type === 'lent')
+    .reduce((acc, l) => acc + l.principalAmount, 0);
+  const totalLentBalance = lentLoans.reduce((acc, l) => acc + l.currentBalance, 0);
+
+  const monthlyCommitment = borrowedLoans.reduce((acc, l) => acc + l.monthlyPayment, 0);
+
+  return {
+    totalBorrowedPrincipal,
+    totalBorrowedBalance,
+    totalLentPrincipal,
+    totalLentBalance,
+    monthlyCommitment,
+  };
+}
+

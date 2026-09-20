@@ -34,8 +34,11 @@ import {
   triggerSystemNotification,
 } from './utils/calculations';
 import { CURRENT_MONTH_KEY, DEFAULT_LOAN_CATEGORIES } from './data/initialData';
+import { Laptop } from 'lucide-react';
 
 // Components
+import { WebHeader } from './components/web/WebHeader';
+import { WebQuickStats } from './components/web/WebQuickStats';
 import { AndroidStatusBar } from './components/AndroidStatusBar';
 import { IosStatusBar } from './components/IosStatusBar';
 import { AndroidNotificationDrawer } from './components/AndroidNotificationDrawer';
@@ -311,130 +314,273 @@ export default function App() {
 
   const isIos = settings.osMode === 'ios';
   const isAndroid = settings.osMode === 'android';
-  const isDesktop = settings.osMode === 'desktop';
+  const isWeb = settings.osMode === 'web' || settings.osMode === 'desktop';
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-start antialiased font-sans">
-      {/* Container: If iOS or Android mobile mode is enabled, render styled device chassis */}
-      <div
-        className={`w-full transition-all duration-300 ${
-          !isDesktop
-            ? isIos
-              ? 'max-w-[430px] my-0 sm:my-6 rounded-none sm:rounded-[54px] border-0 sm:border-[10px] sm:border-slate-800 shadow-2xl overflow-hidden bg-slate-950 relative flex flex-col min-h-screen sm:min-h-[860px]'
-              : 'max-w-[430px] my-0 sm:my-6 rounded-none sm:rounded-[44px] border-0 sm:border-[8px] sm:border-slate-800 shadow-2xl overflow-hidden bg-slate-950 relative flex flex-col min-h-screen sm:min-h-[860px]'
-            : 'max-w-5xl px-4 sm:px-8 py-4 min-h-screen flex flex-col'
-        }`}
-      >
-        {/* Android Punch Hole Camera Notch (Shown in Android phone frame mode) */}
-        {isAndroid && (
-          <div className="hidden sm:flex justify-center pt-2 pb-0.5 bg-slate-900 select-none">
-            <div className="w-4 h-4 rounded-full bg-black border-2 border-slate-800 flex items-center justify-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
-            </div>
-          </div>
-        )}
-
-        {/* Top Status Bar: iOS or Android */}
-        {isIos ? (
-          <IosStatusBar
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased font-sans">
+      {isWeb ? (
+        /* ==================== WEB VERSION (DESKTOP DASHBOARD) ==================== */
+        <div className="min-h-screen flex flex-col w-full">
+          {/* Desktop Web Sticky Header */}
+          <WebHeader
+            activeTab={activeTab}
+            onSelectTab={setActiveTab}
+            pendingRemindersCount={pendingRemindersCount}
             settings={settings}
             onUpdateSettings={handleUpdateSettings}
-            pendingRemindersCount={pendingRemindersCount}
             onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
             onOpenSettings={() => setIsSettingsOpen(true)}
+            onOpenLogPayment={() => handleOpenLogPaymentForLoan()}
+            onOpenAddExpense={() => setIsAddExpenseOpen(true)}
+            onOpenAddLoan={() => setIsAddLoanOpen(true)}
+            onOpenAddReminder={() => setIsAddReminderOpen(true)}
           />
-        ) : (
-          <AndroidStatusBar
-            settings={settings}
-            onUpdateSettings={handleUpdateSettings}
-            pendingRemindersCount={pendingRemindersCount}
-            onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
-            onOpenSettings={() => setIsSettingsOpen(true)}
-          />
-        )}
 
-        {/* Main Content View with smooth scroll */}
-        <main className="flex-1 p-3.5 sm:p-5 overflow-y-auto max-h-[calc(100vh-120px)] sm:max-h-[740px]">
-          {activeTab === 'budget' && (
-            <BudgetView
+          {/* Web Container */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 flex flex-col">
+            {/* Quick Stats Banner */}
+            <WebQuickStats
               budget={currentBudget}
               expenses={expenses}
               loans={loans}
               currencySymbol={settings.currencySymbol}
-              onUpdateBudget={handleUpdateBudget}
-              onOpenAddExpense={() => setIsAddExpenseOpen(true)}
               onOpenLogPayment={() => handleOpenLogPaymentForLoan()}
-            />
-          )}
-
-          {activeTab === 'loans' && (
-            <LoansView
-              loans={loans}
-              payments={loanPayments}
-              currencySymbol={settings.currencySymbol}
-              onOpenAddLoan={() => setIsAddLoanOpen(true)}
-              onOpenLogPayment={handleOpenLogPaymentForLoan}
-              onSelectLoan={(loan) => setSelectedDetailLoan(loan)}
-            />
-          )}
-
-          {activeTab === 'expenses' && (
-            <ExpensesView
-              expenses={expenses}
-              currencySymbol={settings.currencySymbol}
               onOpenAddExpense={() => setIsAddExpenseOpen(true)}
-              onDeleteExpense={handleDeleteExpense}
             />
-          )}
 
-          {activeTab === 'analytics' && (
-            <AnalyticsView
-              budget={currentBudget}
-              budgets={budgets}
-              expenses={expenses}
-              loans={loans}
-              payments={loanPayments}
-              currencySymbol={settings.currencySymbol}
-            />
-          )}
+            {/* Active Tab View */}
+            <main className="flex-1">
+              {activeTab === 'budget' && (
+                <BudgetView
+                  budget={currentBudget}
+                  expenses={expenses}
+                  loans={loans}
+                  currencySymbol={settings.currencySymbol}
+                  onUpdateBudget={handleUpdateBudget}
+                  onOpenAddExpense={() => setIsAddExpenseOpen(true)}
+                  onOpenLogPayment={() => handleOpenLogPaymentForLoan()}
+                />
+              )}
 
-          {activeTab === 'reminders' && (
-            <RemindersView
-              reminders={reminders}
-              currencySymbol={settings.currencySymbol}
-              onOpenAddReminder={() => setIsAddReminderOpen(true)}
-              onCompleteReminder={handleCompleteReminder}
-              onSnoozeReminder={handleSnoozeReminder}
-              onDeleteReminder={handleDeleteReminder}
-              onLogLoanPayment={handleOpenLogPaymentForLoan}
-            />
-          )}
-        </main>
+              {activeTab === 'loans' && (
+                <LoansView
+                  loans={loans}
+                  payments={loanPayments}
+                  currencySymbol={settings.currencySymbol}
+                  onOpenAddLoan={() => setIsAddLoanOpen(true)}
+                  onOpenLogPayment={handleOpenLogPaymentForLoan}
+                  onSelectLoan={(loan) => setSelectedDetailLoan(loan)}
+                />
+              )}
 
-        {/* Bottom Navigation Bar: Cupertino for iOS, Material 3 for Android/Desktop */}
-        {isIos ? (
-          <IosBottomNavBar
-            activeTab={activeTab}
-            onSelectTab={setActiveTab}
-            pendingRemindersCount={pendingRemindersCount}
-            onOpenQuickAdd={() => setIsQuickAddOpen(true)}
-          />
-        ) : (
-          <BottomNavBar
-            activeTab={activeTab}
-            onSelectTab={setActiveTab}
-            pendingRemindersCount={pendingRemindersCount}
-            onOpenQuickAdd={() => setIsQuickAddOpen(true)}
-          />
-        )}
+              {activeTab === 'expenses' && (
+                <ExpensesView
+                  expenses={expenses}
+                  currencySymbol={settings.currencySymbol}
+                  onOpenAddExpense={() => setIsAddExpenseOpen(true)}
+                  onDeleteExpense={handleDeleteExpense}
+                />
+              )}
 
-        {/* Android Gesture Bar at bottom (Shown in Android frame mode) */}
-        {isAndroid && (
-          <div className="hidden sm:flex justify-center pb-1.5 pt-0.5 bg-slate-900 select-none">
-            <div className="w-28 h-1 bg-slate-600 rounded-full" />
+              {activeTab === 'analytics' && (
+                <AnalyticsView
+                  budget={currentBudget}
+                  budgets={budgets}
+                  expenses={expenses}
+                  loans={loans}
+                  payments={loanPayments}
+                  currencySymbol={settings.currencySymbol}
+                />
+              )}
+
+              {activeTab === 'reminders' && (
+                <RemindersView
+                  reminders={reminders}
+                  currencySymbol={settings.currencySymbol}
+                  onOpenAddReminder={() => setIsAddReminderOpen(true)}
+                  onCompleteReminder={handleCompleteReminder}
+                  onSnoozeReminder={handleSnoozeReminder}
+                  onDeleteReminder={handleDeleteReminder}
+                  onLogLoanPayment={handleOpenLogPaymentForLoan}
+                />
+              )}
+            </main>
+
+            {/* Web Footer */}
+            <footer className="mt-12 pt-5 border-t border-slate-800/80 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div>
+                <span className="font-semibold text-slate-400">Budget & Loan Tracker</span>
+                <span className="mx-2">•</span>
+                <span>Web Edition • Local Persistence Enabled</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleUpdateSettings({ ...settings, osMode: 'ios', androidFrameView: true })}
+                  className="text-slate-400 hover:text-slate-200 transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <span>🍏</span> iPhone View
+                </button>
+                <span>•</span>
+                <button
+                  type="button"
+                  onClick={() => handleUpdateSettings({ ...settings, osMode: 'android', androidFrameView: true })}
+                  className="text-slate-400 hover:text-slate-200 transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <span>🤖</span> Android View
+                </button>
+                <span>•</span>
+                <button
+                  type="button"
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer font-medium"
+                >
+                  ⚙️ Settings & Categories
+                </button>
+              </div>
+            </footer>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        /* ==================== MOBILE PHONE FRAME MODE (iOS / Android) ==================== */
+        <div className="py-4 px-2 flex flex-col items-center justify-center w-full min-h-screen">
+          {/* Switch back to Web banner */}
+          <div className="w-full max-w-[430px] flex items-center justify-between px-3.5 py-2 mb-3 bg-slate-900/90 rounded-2xl border border-slate-800 text-xs shadow-md">
+            <div className="flex items-center gap-2 text-slate-300 font-medium">
+              <span className="text-base">{isIos ? '🍏' : '🤖'}</span>
+              <span>{isIos ? 'iPhone Preview' : 'Android Preview'}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleUpdateSettings({ ...settings, osMode: 'web', androidFrameView: false })}
+              className="px-2.5 py-1 rounded-xl bg-emerald-600/25 hover:bg-emerald-600/40 text-emerald-300 font-semibold border border-emerald-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
+              title="Switch to full-screen Web Version"
+            >
+              <Laptop className="w-3.5 h-3.5" />
+              <span>Web Version</span>
+            </button>
+          </div>
+
+          {/* Styled Phone Frame Chassis */}
+          <div
+            className={`w-full transition-all duration-300 ${
+              isIos
+                ? 'max-w-[430px] rounded-none sm:rounded-[54px] border-0 sm:border-[10px] sm:border-slate-800 shadow-2xl overflow-hidden bg-slate-950 relative flex flex-col min-h-screen sm:min-h-[860px]'
+                : 'max-w-[430px] rounded-none sm:rounded-[44px] border-0 sm:border-[8px] sm:border-slate-800 shadow-2xl overflow-hidden bg-slate-950 relative flex flex-col min-h-screen sm:min-h-[860px]'
+            }`}
+          >
+            {/* Android Punch Hole Camera Notch */}
+            {isAndroid && (
+              <div className="hidden sm:flex justify-center pt-2 pb-0.5 bg-slate-900 select-none">
+                <div className="w-4 h-4 rounded-full bg-black border-2 border-slate-800 flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                </div>
+              </div>
+            )}
+
+            {/* Top Status Bar: iOS or Android */}
+            {isIos ? (
+              <IosStatusBar
+                settings={settings}
+                onUpdateSettings={handleUpdateSettings}
+                pendingRemindersCount={pendingRemindersCount}
+                onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+              />
+            ) : (
+              <AndroidStatusBar
+                settings={settings}
+                onUpdateSettings={handleUpdateSettings}
+                pendingRemindersCount={pendingRemindersCount}
+                onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+              />
+            )}
+
+            {/* Mobile View with smooth scroll */}
+            <main className="flex-1 p-3.5 sm:p-5 overflow-y-auto max-h-[calc(100vh-120px)] sm:max-h-[740px]">
+              {activeTab === 'budget' && (
+                <BudgetView
+                  budget={currentBudget}
+                  expenses={expenses}
+                  loans={loans}
+                  currencySymbol={settings.currencySymbol}
+                  onUpdateBudget={handleUpdateBudget}
+                  onOpenAddExpense={() => setIsAddExpenseOpen(true)}
+                  onOpenLogPayment={() => handleOpenLogPaymentForLoan()}
+                />
+              )}
+
+              {activeTab === 'loans' && (
+                <LoansView
+                  loans={loans}
+                  payments={loanPayments}
+                  currencySymbol={settings.currencySymbol}
+                  onOpenAddLoan={() => setIsAddLoanOpen(true)}
+                  onOpenLogPayment={handleOpenLogPaymentForLoan}
+                  onSelectLoan={(loan) => setSelectedDetailLoan(loan)}
+                />
+              )}
+
+              {activeTab === 'expenses' && (
+                <ExpensesView
+                  expenses={expenses}
+                  currencySymbol={settings.currencySymbol}
+                  onOpenAddExpense={() => setIsAddExpenseOpen(true)}
+                  onDeleteExpense={handleDeleteExpense}
+                />
+              )}
+
+              {activeTab === 'analytics' && (
+                <AnalyticsView
+                  budget={currentBudget}
+                  budgets={budgets}
+                  expenses={expenses}
+                  loans={loans}
+                  payments={loanPayments}
+                  currencySymbol={settings.currencySymbol}
+                />
+              )}
+
+              {activeTab === 'reminders' && (
+                <RemindersView
+                  reminders={reminders}
+                  currencySymbol={settings.currencySymbol}
+                  onOpenAddReminder={() => setIsAddReminderOpen(true)}
+                  onCompleteReminder={handleCompleteReminder}
+                  onSnoozeReminder={handleSnoozeReminder}
+                  onDeleteReminder={handleDeleteReminder}
+                  onLogLoanPayment={handleOpenLogPaymentForLoan}
+                />
+              )}
+            </main>
+
+            {/* Bottom Navigation Bar */}
+            {isIos ? (
+              <IosBottomNavBar
+                activeTab={activeTab}
+                onSelectTab={setActiveTab}
+                pendingRemindersCount={pendingRemindersCount}
+                onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+              />
+            ) : (
+              <BottomNavBar
+                activeTab={activeTab}
+                onSelectTab={setActiveTab}
+                pendingRemindersCount={pendingRemindersCount}
+                onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+              />
+            )}
+
+            {/* Android Gesture Bar at bottom */}
+            {isAndroid && (
+              <div className="hidden sm:flex justify-center pb-1.5 pt-0.5 bg-slate-900 select-none">
+                <div className="w-28 h-1 bg-slate-600 rounded-full" />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Speed Dial / Quick Add Modal */}
       <QuickAddModal

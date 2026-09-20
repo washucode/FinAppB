@@ -1,6 +1,6 @@
 {
   "name": "Budget & Loan Tracker",
-  "description": "Comprehensive budget planner, loan payment logger, and expense manager for iOS and Android with custom emoji categories, automated reminders, and monthly data visualization graphs.",
+  "description": "Comprehensive budget planner, loan payment logger, and expense manager for Web, iOS, and Android with custom emoji categories, automated reminders, and monthly data visualization graphs.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
